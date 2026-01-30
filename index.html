@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌈 快乐学英语 - Kids English</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --candy-pink: #FF6B9D;
+            --sunny-yellow: #FFD93D;
+            --sky-blue: #6BCB77;
+            --ocean-blue: #4D96FF;
+            --grape-purple: #9B59B6;
+            --orange-pop: #FF8C42;
+            --mint-green: #00D9A0;
+            --cloud-white: #FFF9F0;
+            --soft-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Baloo 2', 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* 动态背景气泡 */
+        .bubbles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            animation: float-up linear infinite;
+            opacity: 0.6;
+        }
+
+        @keyframes float-up {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.6;
+            }
+            90% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-100px) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* 头部 */
+        header {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            padding: 40px 20px 20px;
+        }
+
+        .logo {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: white;
+            text-shadow: 4px 4px 0 var(--candy-pink), 
+                         8px 8px 0 rgba(0,0,0,0.1);
+            animation: bounce-in 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            display: inline-block;
+        }
+
+        .logo span {
+            display: inline-block;
+            animation: wiggle 2s ease-in-out infinite;
+        }
+
+        .logo span:nth-child(2) { animation-delay: 0.1s; }
+        .logo span:nth-child(3) { animation-delay: 0.2s; }
+        .logo span:nth-child(4) { animation-delay: 0.3s; }
+        .logo span:nth-child(5) { animation-delay: 0.4s; }
+
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(-3deg); }
+            50% { transform: rotate(3deg); }
+        }
+
+        @keyframes bounce-in {
+            0% { transform: scale(0) rotate(-10deg); opacity: 0; }
+            100% { transform: scale(1) rotate(0); opacity: 1; }
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: rgba(255,255,255,0.9);
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        /* 分类选择 */
+        .category-bar {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding: 20px;
+            margin-bottom: 10px;
+        }
+
+        .category-btn {
+            background: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-family: inherit;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .category-btn:hover {
+            transform: scale(1.1) rotate(-2deg);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .category-btn.active {
+            background: linear-gradient(135deg, var(--candy-pink), var(--orange-pop));
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .category-btn .emoji {
+            font-size: 1.4rem;
+        }
+
+        /* 卡片容器 */
+        .cards-container {
+            position: relative;
+            z-index: 10;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            padding: 20px 40px 60px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* 单词卡片 */
+        .word-card {
+            background: white;
+            border-radius: 30px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: var(--soft-shadow);
+            position: relative;
+            overflow: hidden;
+            animation: card-pop 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) backwards;
+        }
+
+        .word-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+            transform: rotate(30deg);
+            transition: all 0.5s;
+            opacity: 0;
+        }
+
+        .word-card:hover::before {
+            opacity: 1;
+        }
+
+        .word-card:hover {
+            transform: translateY(-15px) rotate(2deg) scale(1.02);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+        }
+
+        .word-card:active {
+            transform: scale(0.95);
+        }
+
+        @keyframes card-pop {
+            0% {
+                opacity: 0;
+                transform: scale(0.5) rotate(-10deg);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) rotate(0);
+            }
+        }
+
+        .card-emoji {
+            font-size: 5rem;
+            margin-bottom: 15px;
+            display: block;
+            animation: emoji-bounce 2s ease-in-out infinite;
+            filter: drop-shadow(3px 3px 0 rgba(0,0,0,0.1));
+        }
+
+        @keyframes emoji-bounce {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-10px) scale(1.05); }
+        }
+
+        .word-card:hover .card-emoji {
+            animation: emoji-spin 0.6s ease-in-out;
+        }
+
+        @keyframes emoji-spin {
+            0% { transform: rotate(0) scale(1); }
+            25% { transform: rotate(-15deg) scale(1.2); }
+            75% { transform: rotate(15deg) scale(1.2); }
+            100% { transform: rotate(0) scale(1); }
+        }
+
+        .word-english {
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--ocean-blue), var(--grape-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+
+        .word-phonetic {
+            font-size: 1.1rem;
+            color: #888;
+            margin-bottom: 12px;
+            font-weight: 400;
+            letter-spacing: 1px;
+        }
+
+        .word-chinese {
+            font-size: 1.4rem;
+            color: #555;
+            font-weight: 600;
+            font-family: 'Noto Sans SC', sans-serif;
+        }
+
+        .play-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--sunny-yellow), var(--orange-pop));
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(255,140,66,0.4);
+        }
+
+        .play-btn:hover {
+            transform: scale(1.2) rotate(15deg);
+        }
+
+        .play-btn:active {
+            transform: scale(0.9);
+        }
+
+        .play-btn.playing {
+            animation: pulse-ring 0.8s ease-out infinite;
+        }
+
+        @keyframes pulse-ring {
+            0% { box-shadow: 0 0 0 0 rgba(255,140,66,0.6); }
+            100% { box-shadow: 0 0 0 20px rgba(255,140,66,0); }
+        }
+
+        /* 卡片颜色主题 */
+        .word-card[data-theme="pink"] { border-top: 6px solid var(--candy-pink); }
+        .word-card[data-theme="blue"] { border-top: 6px solid var(--ocean-blue); }
+        .word-card[data-theme="green"] { border-top: 6px solid var(--sky-blue); }
+        .word-card[data-theme="yellow"] { border-top: 6px solid var(--sunny-yellow); }
+        .word-card[data-theme="purple"] { border-top: 6px solid var(--grape-purple); }
+        .word-card[data-theme="orange"] { border-top: 6px solid var(--orange-pop); }
+        .word-card[data-theme="mint"] { border-top: 6px solid var(--mint-green); }
+
+        /* 星星装饰 */
+        .star-decoration {
+            position: absolute;
+            font-size: 1.2rem;
+            opacity: 0;
+            transition: all 0.3s;
+        }
+
+        .word-card:hover .star-decoration {
+            opacity: 1;
+        }
+
+        .star-1 { top: 10px; left: 15px; animation: twinkle 1s ease-in-out infinite; }
+        .star-2 { bottom: 15px; left: 20px; animation: twinkle 1s ease-in-out infinite 0.3s; }
+        .star-3 { bottom: 20px; right: 60px; animation: twinkle 1s ease-in-out infinite 0.6s; }
+
+        @keyframes twinkle {
+            0%, 100% { transform: scale(1) rotate(0); opacity: 0.7; }
+            50% { transform: scale(1.3) rotate(180deg); opacity: 1; }
+        }
+
+        /* 成功反馈动画 */
+        .success-burst {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 8rem;
+            z-index: 1000;
+            pointer-events: none;
+            animation: burst 0.8s ease-out forwards;
+        }
+
+        @keyframes burst {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+            50% { transform: translate(-50%, -50%) scale(1.5); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(2); opacity: 0; }
+        }
+
+        /* 底部装饰 */
+        .footer-decoration {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23ffffff' fill-opacity='0.3' d='M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,224C672,245,768,267,864,250.7C960,235,1056,181,1152,165.3C1248,149,1344,171,1392,181.3L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E") no-repeat bottom;
+            background-size: cover;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .logo { font-size: 2.5rem; }
+            .cards-container { padding: 15px; gap: 15px; }
+            .word-card { padding: 20px; border-radius: 20px; }
+            .card-emoji { font-size: 4rem; }
+            .word-english { font-size: 1.8rem; }
+            .category-btn { padding: 10px 18px; font-size: 1rem; }
+        }
+
+        /* 学习进度条 */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--mint-green), var(--sunny-yellow), var(--candy-pink));
+            z-index: 100;
+            transition: width 0.5s ease;
+            border-radius: 0 3px 3px 0;
+        }
+
+        /* 计数器 */
+        .counter {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            box-shadow: var(--soft-shadow);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .counter .star {
+            color: var(--sunny-yellow);
+            font-size: 1.4rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+    <div class="counter">
+        <span class="star">⭐</span>
+        <span id="learnedCount">0</span> / <span id="totalCount">0</span>
+    </div>
+
+    <div class="bubbles" id="bubbles"></div>
+
+    <header>
+        <h1 class="logo">
+            <span>🌈</span>
+            <span>快</span>
+            <span>乐</span>
+            <span>学</span>
+            <span>英</span>
+            <span>语</span>
+        </h1>
+        <p class="subtitle">点击卡片听发音，轻松学单词！</p>
+    </header>
+
+    <nav class="category-bar">
+        <button class="category-btn active" data-category="all">
+            <span class="emoji">🎯</span> 全部
+        </button>
+        <button class="category-btn" data-category="animals">
+            <span class="emoji">🐾</span> 动物
+        </button>
+        <button class="category-btn" data-category="fruits">
+            <span class="emoji">🍎</span> 水果
+        </button>
+        <button class="category-btn" data-category="colors">
+            <span class="emoji">🎨</span> 颜色
+        </button>
+        <button class="category-btn" data-category="numbers">
+            <span class="emoji">🔢</span> 数字
+        </button>
+        <button class="category-btn" data-category="body">
+            <span class="emoji">🖐️</span> 身体
+        </button>
+        <button class="category-btn" data-category="food">
+            <span class="emoji">🍔</span> 食物
+        </button>
+    </nav>
+
+    <main class="cards-container" id="cardsContainer"></main>
+
+    <div class="footer-decoration"></div>
+
+    <script>
+        // 单词数据库
+        const wordsData = {
+            animals: [
+                { word: 'Cat', phonetic: '/kæt/', chinese: '猫', emoji: '🐱', theme: 'pink' },
+                { word: 'Dog', phonetic: '/dɒɡ/', chinese: '狗', emoji: '🐶', theme: 'blue' },
+                { word: 'Bird', phonetic: '/bɜːd/', chinese: '鸟', emoji: '🐦', theme: 'yellow' },
+                { word: 'Fish', phonetic: '/fɪʃ/', chinese: '鱼', emoji: '🐟', theme: 'blue' },
+                { word: 'Rabbit', phonetic: '/ˈræbɪt/', chinese: '兔子', emoji: '🐰', theme: 'pink' },
+                { word: 'Elephant', phonetic: '/ˈelɪfənt/', chinese: '大象', emoji: '🐘', theme: 'purple' },
+                { word: 'Lion', phonetic: '/ˈlaɪən/', chinese: '狮子', emoji: '🦁', theme: 'orange' },
+                { word: 'Monkey', phonetic: '/ˈmʌŋki/', chinese: '猴子', emoji: '🐵', theme: 'orange' },
+                { word: 'Panda', phonetic: '/ˈpændə/', chinese: '熊猫', emoji: '🐼', theme: 'green' },
+                { word: 'Tiger', phonetic: '/ˈtaɪɡə/', chinese: '老虎', emoji: '🐯', theme: 'orange' },
+                { word: 'Bear', phonetic: '/beə/', chinese: '熊', emoji: '🐻', theme: 'orange' },
+                { word: 'Pig', phonetic: '/pɪɡ/', chinese: '猪', emoji: '🐷', theme: 'pink' },
+            ],
+            fruits: [
+                { word: 'Apple', phonetic: '/ˈæpl/', chinese: '苹果', emoji: '🍎', theme: 'pink' },
+                { word: 'Banana', phonetic: '/bəˈnɑːnə/', chinese: '香蕉', emoji: '🍌', theme: 'yellow' },
+                { word: 'Orange', phonetic: '/ˈɒrɪndʒ/', chinese: '橙子', emoji: '🍊', theme: 'orange' },
+                { word: 'Grape', phonetic: '/ɡreɪp/', chinese: '葡萄', emoji: '🍇', theme: 'purple' },
+                { word: 'Watermelon', phonetic: '/ˈwɔːtəmelən/', chinese: '西瓜', emoji: '🍉', theme: 'green' },
+                { word: 'Strawberry', phonetic: '/ˈstrɔːbəri/', chinese: '草莓', emoji: '🍓', theme: 'pink' },
+                { word: 'Peach', phonetic: '/piːtʃ/', chinese: '桃子', emoji: '🍑', theme: 'pink' },
+                { word: 'Pineapple', phonetic: '/ˈpaɪnæpl/', chinese: '菠萝', emoji: '🍍', theme: 'yellow' },
+                { word: 'Cherry', phonetic: '/ˈtʃeri/', chinese: '樱桃', emoji: '🍒', theme: 'pink' },
+                { word: 'Lemon', phonetic: '/ˈlemən/', chinese: '柠檬', emoji: '🍋', theme: 'yellow' },
+            ],
+            colors: [
+                { word: 'Red', phonetic: '/red/', chinese: '红色', emoji: '❤️', theme: 'pink' },
+                { word: 'Blue', phonetic: '/bluː/', chinese: '蓝色', emoji: '💙', theme: 'blue' },
+                { word: 'Yellow', phonetic: '/ˈjeləʊ/', chinese: '黄色', emoji: '💛', theme: 'yellow' },
+                { word: 'Green', phonetic: '/ɡriːn/', chinese: '绿色', emoji: '💚', theme: 'green' },
+                { word: 'Purple', phonetic: '/ˈpɜːpl/', chinese: '紫色', emoji: '💜', theme: 'purple' },
+                { word: 'Orange', phonetic: '/ˈɒrɪndʒ/', chinese: '橙色', emoji: '🧡', theme: 'orange' },
+                { word: 'Pink', phonetic: '/pɪŋk/', chinese: '粉色', emoji: '🩷', theme: 'pink' },
+                { word: 'Black', phonetic: '/blæk/', chinese: '黑色', emoji: '🖤', theme: 'purple' },
+                { word: 'White', phonetic: '/waɪt/', chinese: '白色', emoji: '🤍', theme: 'mint' },
+                { word: 'Brown', phonetic: '/braʊn/', chinese: '棕色', emoji: '🤎', theme: 'orange' },
+            ],
+            numbers: [
+                { word: 'One', phonetic: '/wʌn/', chinese: '一', emoji: '1️⃣', theme: 'blue' },
+                { word: 'Two', phonetic: '/tuː/', chinese: '二', emoji: '2️⃣', theme: 'green' },
+                { word: 'Three', phonetic: '/θriː/', chinese: '三', emoji: '3️⃣', theme: 'pink' },
+                { word: 'Four', phonetic: '/fɔː/', chinese: '四', emoji: '4️⃣', theme: 'orange' },
+                { word: 'Five', phonetic: '/faɪv/', chinese: '五', emoji: '5️⃣', theme: 'purple' },
+                { word: 'Six', phonetic: '/sɪks/', chinese: '六', emoji: '6️⃣', theme: 'blue' },
+                { word: 'Seven', phonetic: '/ˈsevn/', chinese: '七', emoji: '7️⃣', theme: 'yellow' },
+                { word: 'Eight', phonetic: '/eɪt/', chinese: '八', emoji: '8️⃣', theme: 'mint' },
+                { word: 'Nine', phonetic: '/naɪn/', chinese: '九', emoji: '9️⃣', theme: 'pink' },
+                { word: 'Ten', phonetic: '/ten/', chinese: '十', emoji: '🔟', theme: 'orange' },
+            ],
+            body: [
+                { word: 'Head', phonetic: '/hed/', chinese: '头', emoji: '🗣️', theme: 'blue' },
+                { word: 'Eye', phonetic: '/aɪ/', chinese: '眼睛', emoji: '👁️', theme: 'blue' },
+                { word: 'Ear', phonetic: '/ɪə/', chinese: '耳朵', emoji: '👂', theme: 'pink' },
+                { word: 'Nose', phonetic: '/nəʊz/', chinese: '鼻子', emoji: '👃', theme: 'orange' },
+                { word: 'Mouth', phonetic: '/maʊθ/', chinese: '嘴巴', emoji: '👄', theme: 'pink' },
+                { word: 'Hand', phonetic: '/hænd/', chinese: '手', emoji: '🖐️', theme: 'yellow' },
+                { word: 'Foot', phonetic: '/fʊt/', chinese: '脚', emoji: '🦶', theme: 'orange' },
+                { word: 'Arm', phonetic: '/ɑːm/', chinese: '手臂', emoji: '💪', theme: 'green' },
+                { word: 'Leg', phonetic: '/leɡ/', chinese: '腿', emoji: '🦵', theme: 'mint' },
+                { word: 'Hair', phonetic: '/heə/', chinese: '头发', emoji: '💇', theme: 'purple' },
+            ],
+            food: [
+                { word: 'Bread', phonetic: '/bred/', chinese: '面包', emoji: '🍞', theme: 'yellow' },
+                { word: 'Rice', phonetic: '/raɪs/', chinese: '米饭', emoji: '🍚', theme: 'mint' },
+                { word: 'Egg', phonetic: '/eɡ/', chinese: '鸡蛋', emoji: '🥚', theme: 'yellow' },
+                { word: 'Milk', phonetic: '/mɪlk/', chinese: '牛奶', emoji: '🥛', theme: 'blue' },
+                { word: 'Cake', phonetic: '/keɪk/', chinese: '蛋糕', emoji: '🎂', theme: 'pink' },
+                { word: 'Cookie', phonetic: '/ˈkʊki/', chinese: '饼干', emoji: '🍪', theme: 'orange' },
+                { word: 'Pizza', phonetic: '/ˈpiːtsə/', chinese: '披萨', emoji: '🍕', theme: 'orange' },
+                { word: 'Ice cream', phonetic: '/aɪs kriːm/', chinese: '冰淇淋', emoji: '🍦', theme: 'pink' },
+                { word: 'Hamburger', phonetic: '/ˈhæmbɜːɡə/', chinese: '汉堡', emoji: '🍔', theme: 'orange' },
+                { word: 'Candy', phonetic: '/ˈkændi/', chinese: '糖果', emoji: '🍬', theme: 'purple' },
+            ]
+        };
+
+        let learnedWords = new Set();
+        let currentCategory = 'all';
+
+        // 创建背景气泡
+        function createBubbles() {
+            const container = document.getElementById('bubbles');
+            const colors = ['#FF6B9D', '#FFD93D', '#6BCB77', '#4D96FF', '#9B59B6', '#FF8C42'];
+            
+            for (let i = 0; i < 20; i++) {
+                const bubble = document.createElement('div');
+                bubble.className = 'bubble';
+                const size = Math.random() * 60 + 20;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                
+                bubble.style.cssText = `
+                    width: ${size}px;
+                    height: ${size}px;
+                    left: ${Math.random() * 100}%;
+                    background: ${color};
+                    animation-duration: ${Math.random() * 15 + 10}s;
+                    animation-delay: ${Math.random() * 10}s;
+                `;
+                container.appendChild(bubble);
+            }
+        }
+
+        // 获取所有单词
+        function getAllWords() {
+            return Object.values(wordsData).flat();
+        }
+
+        // 渲染卡片
+        function renderCards(category) {
+            const container = document.getElementById('cardsContainer');
+            container.innerHTML = '';
+            
+            let words = category === 'all' ? getAllWords() : wordsData[category] || [];
+            
+            document.getElementById('totalCount').textContent = words.length;
+            
+            words.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'word-card';
+                card.dataset.theme = item.theme;
+                card.dataset.word = item.word;
+                card.style.animationDelay = `${index * 0.08}s`;
+                
+                card.innerHTML = `
+                    <span class="star-decoration star-1">⭐</span>
+                    <span class="star-decoration star-2">✨</span>
+                    <span class="star-decoration star-3">🌟</span>
+                    <button class="play-btn" onclick="event.stopPropagation(); speak('${item.word}', this)">🔊</button>
+                    <span class="card-emoji">${item.emoji}</span>
+                    <div class="word-english">${item.word}</div>
+                    <div class="word-phonetic">${item.phonetic}</div>
+                    <div class="word-chinese">${item.chinese}</div>
+                `;
+                
+                card.addEventListener('click', () => {
+                    speak(item.word, card.querySelector('.play-btn'));
+                    markAsLearned(item.word);
+                });
+                
+                container.appendChild(card);
+            });
+            
+            updateProgress();
+        }
+
+        // 语音朗读
+        function speak(word, btn) {
+            const utterance = new SpeechSynthesisUtterance(word);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.8;
+            utterance.pitch = 1.1;
+            
+            if (btn) {
+                btn.classList.add('playing');
+                utterance.onend = () => btn.classList.remove('playing');
+            }
+            
+            speechSynthesis.cancel();
+            speechSynthesis.speak(utterance);
+        }
+
+        // 标记为已学习
+        function markAsLearned(word) {
+            if (!learnedWords.has(word)) {
+                learnedWords.add(word);
+                updateProgress();
+                
+                // 显示成功动画
+                if (learnedWords.size % 5 === 0) {
+                    showSuccessBurst();
+                }
+            }
+        }
+
+        // 更新进度
+        function updateProgress() {
+            const total = currentCategory === 'all' ? getAllWords().length : (wordsData[currentCategory]?.length || 0);
+            const learned = currentCategory === 'all' 
+                ? learnedWords.size 
+                : [...learnedWords].filter(w => 
+                    wordsData[currentCategory]?.some(item => item.word === w)
+                ).length;
+            
+            document.getElementById('learnedCount').textContent = learned;
+            const percentage = total > 0 ? (learned / total) * 100 : 0;
+            document.getElementById('progressBar').style.width = percentage + '%';
+        }
+
+        // 成功动画
+        function showSuccessBurst() {
+            const emojis = ['🎉', '⭐', '🌟', '✨', '🏆', '👏', '🎊'];
+            const burst = document.createElement('div');
+            burst.className = 'success-burst';
+            burst.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+            document.body.appendChild(burst);
+            
+            setTimeout(() => burst.remove(), 800);
+        }
+
+        // 分类按钮事件
+        document.querySelectorAll('.category-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentCategory = btn.dataset.category;
+                renderCards(currentCategory);
+            });
+        });
+
+        // 初始化
+        createBubbles();
+        renderCards('all');
+    </script>
+</body>
+</html>
